@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a9baa05691de5924e9dd1bd763468f13
+timeCreated: 1474029734
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 58774
+  packageName: Concrete Walls - Japan
+  packageVersion: 1.3
+  assetPath: Assets/JapanMaterials/concreteWalls/concreteRough/concreteRough.mat
+  uploadId: 137383
