@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "LocalPlayer",
+    "maps": [
+        {
+            "name": "LocalPlayer",
+            "id": "844c8556-3957-4d5d-b915-eef6f5741843",
+            "actions": [
+                {
+                    "name": "Aim",
+                    "type": "Button",
+                    "id": "d9777fd0-46f1-4de9-b937-e5527f744255",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3a9073d5-9fca-4cd4-b54f-ff4e0d90ad71",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Aim",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

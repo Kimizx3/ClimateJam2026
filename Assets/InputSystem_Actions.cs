@@ -1077,6 +1077,34 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""LocalPlayer"",
+            ""id"": ""e92d3d1f-fbd6-421a-a518-be8926b0aa63"",
+            ""actions"": [
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Button"",
+                    ""id"": ""66ff0116-bff0-4064-a0aa-98671a7e09e7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""cbaef358-c862-426d-9e25-6b0f472b8c74"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1165,12 +1193,16 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // LocalPlayer
+        m_LocalPlayer = asset.FindActionMap("LocalPlayer", throwIfNotFound: true);
+        m_LocalPlayer_Aim = m_LocalPlayer.FindAction("Aim", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_LocalPlayer.enabled, "This will cause a leak and performance issues, InputSystem_Actions.LocalPlayer.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1621,6 +1653,102 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UIActions" /> instance referencing this action map.
     /// </summary>
     public UIActions @UI => new UIActions(this);
+
+    // LocalPlayer
+    private readonly InputActionMap m_LocalPlayer;
+    private List<ILocalPlayerActions> m_LocalPlayerActionsCallbackInterfaces = new List<ILocalPlayerActions>();
+    private readonly InputAction m_LocalPlayer_Aim;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "LocalPlayer".
+    /// </summary>
+    public struct LocalPlayerActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public LocalPlayerActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "LocalPlayer/Aim".
+        /// </summary>
+        public InputAction @Aim => m_Wrapper.m_LocalPlayer_Aim;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_LocalPlayer; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="LocalPlayerActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(LocalPlayerActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="LocalPlayerActions" />
+        public void AddCallbacks(ILocalPlayerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_LocalPlayerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LocalPlayerActionsCallbackInterfaces.Add(instance);
+            @Aim.started += instance.OnAim;
+            @Aim.performed += instance.OnAim;
+            @Aim.canceled += instance.OnAim;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="LocalPlayerActions" />
+        private void UnregisterCallbacks(ILocalPlayerActions instance)
+        {
+            @Aim.started -= instance.OnAim;
+            @Aim.performed -= instance.OnAim;
+            @Aim.canceled -= instance.OnAim;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="LocalPlayerActions.UnregisterCallbacks(ILocalPlayerActions)" />.
+        /// </summary>
+        /// <seealso cref="LocalPlayerActions.UnregisterCallbacks(ILocalPlayerActions)" />
+        public void RemoveCallbacks(ILocalPlayerActions instance)
+        {
+            if (m_Wrapper.m_LocalPlayerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="LocalPlayerActions.AddCallbacks(ILocalPlayerActions)" />
+        /// <seealso cref="LocalPlayerActions.RemoveCallbacks(ILocalPlayerActions)" />
+        /// <seealso cref="LocalPlayerActions.UnregisterCallbacks(ILocalPlayerActions)" />
+        public void SetCallbacks(ILocalPlayerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_LocalPlayerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_LocalPlayerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="LocalPlayerActions" /> instance referencing this action map.
+    /// </summary>
+    public LocalPlayerActions @LocalPlayer => new LocalPlayerActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -1834,5 +1962,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "LocalPlayer" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="LocalPlayerActions.AddCallbacks(ILocalPlayerActions)" />
+    /// <seealso cref="LocalPlayerActions.RemoveCallbacks(ILocalPlayerActions)" />
+    public interface ILocalPlayerActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Aim" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAim(InputAction.CallbackContext context);
     }
 }

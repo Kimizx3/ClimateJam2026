@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class BaseCharacter : MonoBehaviour
 {
-    protected MovementComponent _movementComponent;
-    protected LookComponent _lookComponent;
+    protected MovementComponent movementComponent;
+    protected LookComponent lookComponent;
+    protected Kodak kodak;
 
     protected virtual void Awake()
     {
-        _movementComponent = GetComponent<MovementComponent>();
-        _lookComponent = GetComponent<LookComponent>();
+        kodak = GetComponent<Kodak>();
+        movementComponent = GetComponent<MovementComponent>();
+        lookComponent = GetComponent<LookComponent>();
     }
 }
